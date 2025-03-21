@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Position Size Calculator 🚀</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #667eea, #764ba2); /* Gradient Background */
+            color: #fff;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-Transparent White */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            text-align: center; /* Center align content */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #4a90e2; /* Vibrant Blue */
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            margin-bottom: 25px;
+            color: #555; /* Dark Gray */
+            font-size: 1.1em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333; /* Dark Text */
+            text-align: left;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 25px;
+            border: 1px solid #ccc; /* Light Gray */
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            color: #333;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Transition on Hover */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #3569a8;
+            transform: translateY(-2px); /* Slight Lift on Hover */
+        }
+
+        #result {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            font-weight: 600;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left; /* Align result text to the left */
+        }
+
+        #result strong {
+            font-weight: 700;
+            color: #4a90e2;
+        }
+
+        .error {
+            color: #e74c3c; /* Red */
+            margin-top: 15px;
+            padding: 15px;
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 1px solid #e74c3c;
+            border-radius: 6px;
+            font-weight: normal;
+            text-align: center;
+        }
+
+        .disclaimer {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+        /* Style for the custom risk limit input */
+        .custom-risk-limit {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .custom-risk-limit input[type="number"] {
+            width: 100%;
+        }
+
+        /* Show custom input when "Custom" is selected */
+        #riskLimitSelect:valid ~ .custom-risk-limit {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Stock Position Size Calculator 🚀</h1>
+
+        <p>Maximize your trading potential! This calculator helps you determine the optimal position size for your stock trades, taking into account your risk tolerance and stop-loss strategy. Enter the details below to calculate the recommended number of shares.</p>
+
+         <label for="riskLimitSelect">Risk Limit (Rs):</label>
+        <select id="riskLimitSelect" name="riskLimitSelect">
+            <option value="50">50₹</option>
+            <option value="100">100₹</option>
+            <option value="200">200₹</option>
+            <option value="500">500₹</option>
+            <option value="custom" selected>Custom₹</option>
+        </select>
+
+        <div class="custom-risk-limit">
+            <label for="customRiskLimit">Enter Custom Risk Limit (Rs):</label>
+            <input type="number" id="customRiskLimit" name="customRiskLimit" min="0" step="10" value="">
+        </div>
+
+
+        <label for="stopLossPerShare">Stop-Loss per Share (Rs):</label>
+        <input type="number" id="stopLossPerShare" name="stopLossPerShare" min="0" step="1" value="10">
+
+        <label for="entryPrice">Entry Price (Rs):</label>
+        <input type="number" id="entryPrice" name="entryPrice" min="0" step="1" value="100">
+
+        <button onclick="calculateShares()">Calculate Position Size 💰</button>
+
+        <div id="result"></div>
+
+        <p class="disclaimer">Disclaimer: This calculator provides an estimate based on the information you provide. It is not financial advice, and you should consult with a qualified professional before making any investment decisions. Trading involves risk, and you could lose money. Use this tool responsibly!</p>
+    </div>
+
+    <script>
+         function calculateShares() {
+            // Get risk limit value
+            let riskLimit;
+            const riskLimitSelect = document.getElementById('riskLimitSelect');
+            const customRiskLimitInput = document.getElementById('customRiskLimit');
+
+             if (riskLimitSelect.value === 'custom') {
+                riskLimit = parseFloat(customRiskLimitInput.value);
+            } else {
+                riskLimit = parseFloat(riskLimitSelect.value);
+            }
+
+            const stopLossPerShare = parseFloat(document.getElementById('stopLossPerShare').value);
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value);
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            resultDiv.classList.remove("error");
+
+            // Input validation
+            if (isNaN(riskLimit) || riskLimit <= 0) {
+              resultDiv.classList.add("error");
+              resultDiv.innerHTML = "Please enter a valid positive Risk Limit.";
+              return;
+            }
+            if (isNaN(stopLossPerShare) || stopLossPerShare <= 0) {
+              resultDiv.classList.add("error");
+              resultDiv.innerHTML = "Please enter a valid positive Stop-Loss per Share.";
+              return;
+            }
+
+            if (isNaN(entryPrice) || entryPrice <= 0) {
+                resultDiv.classList.add("error");
+                resultDiv.innerHTML = "Please enter a valid positive Entry Price.";
+                return;
+            }
+
+            if(entryPrice <= stopLossPerShare){
+              resultDiv.classList.add("error");
+              resultDiv.innerHTML = "Entry Price should be greater than Stop-Loss per Share.";
+              return;
+            }
+
+            // Calculation
+            let numberOfShares = riskLimit / stopLossPerShare;
+
+            // Adjust the number of shares if the total risk exceeds the risk limit
+            let totalRisk = numberOfShares * stopLossPerShare;
+            if (totalRisk > riskLimit) {
+                numberOfShares = Math.floor(riskLimit / stopLossPerShare);
+                totalRisk = numberOfShares * stopLossPerShare;
+            }
+
+            const stopLossPrice = entryPrice - stopLossPerShare;
+
+            // Display the result
+            resultDiv.innerHTML = `Here's your recommended position size:<br><br>`;
+            resultDiv.innerHTML += `Optimal Number of Shares: <strong>${numberOfShares}</strong><br><br>`;
+            resultDiv.innerHTML += `Entry Price: <strong>Rs ${entryPrice.toFixed(2)}</strong><br>`;
+            resultDiv.innerHTML += `Stop-Loss Price: <strong>Rs ${stopLossPrice.toFixed(2)}</strong><br>`;
+            resultDiv.innerHTML += `Total Risk: <strong>Rs ${totalRisk.toFixed(2)}</strong>`;
+
+        }
+    </script>
+
+</body>
+</html>
